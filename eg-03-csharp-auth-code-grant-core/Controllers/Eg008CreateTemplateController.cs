@@ -37,7 +37,8 @@ namespace eg_03_csharp_auth_code_grant_core.Controllers
             config.AddDefaultHeader("Authorization", "Bearer " + accessToken);
             TemplatesApi templatesApi = new TemplatesApi(config);
             TemplatesApi.ListTemplatesOptions options = new TemplatesApi.ListTemplatesOptions();
-            options.searchText = "Example Signer and CC template";
+            //options.searchText = "Example Signer and CC template";
+            options.searchText = "CoD"; //Added by DT
             EnvelopeTemplateResults results = templatesApi.ListTemplates(accountId, options);
 
             string templateId;

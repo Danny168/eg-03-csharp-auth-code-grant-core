@@ -169,9 +169,88 @@ namespace eg_03_csharp_auth_code_grant_core.Controllers
                 CustomFields = cf
             };
 
+            // Added by DT to popuplate own template
+            Text tfName = new Text
+            {
+                TabLabel = "firstName",
+                Value = "Jabberywocky First Name"
+            };
+            Text tSurname = new Text
+            {
+                TabLabel = "lastName",
+                Value = "Suriname"
+            };
+            Text tResAdd = new Text
+            {
+                TabLabel = "residentialAddress",
+                Value = "57 Grange Road"
+            };
+            Text tDOB = new Text
+            {
+                TabLabel = "dob",
+                Value = "08/08/1888"
+            };
+            Text tmobNo = new Text
+            {
+                TabLabel = "mobileNo",
+                Value = "1234567890"
+            };
+            Text tDenticareID = new Text
+            {
+                TabLabel = "dentiCareAccNo",
+                Value = "111112222233333"
+            };
+            Text tSuburb = new Text
+            {
+                TabLabel = "residentialSuburb",
+                Value = "Tanjung Katong"
+            };
+            Text tPostCode = new Text
+            {
+                TabLabel = "residentialPostCode",
+                Value = "437111"
+            };
+
+            // Add the tabs model (including the SignHere tab) to the signer.
+            // The Tabs object wants arrays of the different field/tab types
+            // Tabs are set per recipient/signer
+            Tabs tabsCoD = new Tabs
+            {
+                //CheckboxTabs = new List<Checkbox> { ckAuthorization, ckAgreement },
+                //RadioGroupTabs = new List<RadioGroup> { radioGroup },
+                TextTabs = new List<Text> { tfName, tSurname, tResAdd, tDOB, tmobNo , tDenticareID, tSuburb, tPostCode},
+                //ListTabs = new List<List> { colorPicker }
+            };
+
+            // Create a signer recipient to sign the document, identified by name and email
+            // We're setting the parameters via the object creation
+            TemplateRole responsibleParty = new TemplateRole
+            {
+                Email = signerEmail,
+                Name = signerName,
+                RoleName = "Responsible Party",
+                ClientUserId = signerClientId, // Change the signer to be embedded
+                Tabs = tabsCoD //Set tab values
+            };
+
+            // Step 4: Create the envelope definition
+            EnvelopeDefinition envelopeAttributesCoD = new EnvelopeDefinition
+            {
+                // Uses the template ID received from example 08
+                TemplateId = RequestItemsService.TemplateId,
+                Status = "Sent",
+                // Add the TemplateRole objects to utilize a pre-defined
+                // document and signing/routing order on an envelope.
+                // Template role names need to match what is available on
+                // the correlated templateID or else an error will occur
+                TemplateRoles = new List<TemplateRole> { responsibleParty },
+            };
+            // End of addition by DT
+
             // Step 5: Call the eSignature REST API
             EnvelopesApi envelopesApi = new EnvelopesApi(config);
-            EnvelopeSummary results = envelopesApi.CreateEnvelope(accountId, envelopeAttributes);
+            //EnvelopeSummary results = envelopesApi.CreateEnvelope(accountId, envelopeAttributes);
+            EnvelopeSummary results = envelopesApi.CreateEnvelope(accountId, envelopeAttributesCoD); // Added by DT
 
             // Step 6: Create the View Request
             RequestItemsService.EnvelopeId = results.EnvelopeId;
